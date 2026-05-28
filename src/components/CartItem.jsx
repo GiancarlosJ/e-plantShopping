@@ -1,67 +1,63 @@
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import {
   removeItem,
   updateQuantity,
   selectCartItems,
   selectCartTotalItems,
   selectCartTotalPrice,
-} from '../CartSlice';
-import './CartItem.css';
+} from "../CartSlice";
+import "./CartItem.css";
 
 function CartItem({ navigateTo }) {
   const dispatch = useDispatch();
   const items = useSelector(selectCartItems);
   const totalItems = useSelector(selectCartTotalItems);
   const totalPrice = useSelector(selectCartTotalPrice);
-
   const [checkoutMsg, setCheckoutMsg] = useState(false);
 
-  const handleRemove = (name) => {
-    dispatch(removeItem(name));
-  };
+  const handleRemove = (name) => dispatch(removeItem(name));
 
-  const handleIncrease = (item) => {
+  const handleIncrement = (item) => {
     dispatch(updateQuantity({ name: item.name, quantity: item.quantity + 1 }));
   };
 
-  const handleDecrease = (item) => {
+  const handleDecrement = (item) => {
     if (item.quantity === 1) {
       dispatch(removeItem(item.name));
     } else {
-      dispatch(updateQuantity({ name: item.name, quantity: item.quantity - 1 }));
+      dispatch(
+        updateQuantity({ name: item.name, quantity: item.quantity - 1 }),
+      );
     }
   };
 
-  const handleCheckout = () => {
-    setCheckoutMsg(true);
-  };
+  const handleContinueShopping = () => navigateTo("products");
+
+  const handleCheckout = () => setCheckoutMsg(true);
 
   return (
     <div className="cart-container">
-      {/* NAVBAR */}
       <nav className="navbar">
-        <div className="navbar-brand" onClick={() => navigateTo('home')}>
+        <div className="navbar-brand" onClick={() => navigateTo("home")}>
           🌿 Paradise Nursery
         </div>
         <div className="navbar-links">
-          <button onClick={() => navigateTo('home')}>Inicio</button>
-          <button onClick={() => navigateTo('products')}>Plantas</button>
+          <button onClick={() => navigateTo("home")}>Home</button>
+          <button onClick={() => navigateTo("products")}>Plants</button>
           <button className="cart-btn-active">
-            🛒 Carrito
-            {totalItems > 0 && (
-              <span className="cart-badge">{totalItems}</span>
-            )}
+            🛒 Cart
+            {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
           </button>
         </div>
       </nav>
 
       <div className="cart-content">
-        <h1 className="cart-title">🛒 Tu Carrito de Compras</h1>
+        <h1 className="cart-title">🛒 Shopping Cart</h1>
 
         {checkoutMsg && (
           <div className="checkout-banner">
-            🎉 ¡Próximamente! La función de pago estará disponible muy pronto.
+            🎉 Coming Soon! The checkout feature will be available very soon.
             <button onClick={() => setCheckoutMsg(false)}>✕</button>
           </div>
         )}
@@ -69,18 +65,14 @@ function CartItem({ navigateTo }) {
         {items.length === 0 ? (
           <div className="empty-cart">
             <p className="empty-icon">🌱</p>
-            <h2>Tu carrito está vacío</h2>
-            <p>¡Agrega algunas plantas para comenzar!</p>
-            <button
-              className="continue-btn"
-              onClick={() => navigateTo('products')}
-            >
-              Ver Plantas
+            <h2>Your cart is empty</h2>
+            <p>Add some plants to get started!</p>
+            <button className="continue-btn" onClick={handleContinueShopping}>
+              Continue Shopping
             </button>
           </div>
         ) : (
           <div className="cart-layout">
-            {/* LISTA DE ARTÍCULOS */}
             <div className="cart-items-list">
               {items.map((item) => (
                 <div key={item.name} className="cart-item-card">
@@ -95,11 +87,13 @@ function CartItem({ navigateTo }) {
                   <div className="cart-item-details">
                     <h3>{item.name}</h3>
                     <p className="cart-item-unit">
-                      Precio unitario: <strong>S/. {item.price.toFixed(2)}</strong>
+                      Unit Price: <strong>${item.price.toFixed(2)}</strong>
                     </p>
                     <p className="cart-item-subtotal">
-                      Subtotal:{' '}
-                      <strong>S/. {(item.price * item.quantity).toFixed(2)}</strong>
+                      Total Cost:{" "}
+                      <strong>
+                        ${(item.price * item.quantity).toFixed(2)}
+                      </strong>
                     </p>
                   </div>
 
@@ -107,16 +101,14 @@ function CartItem({ navigateTo }) {
                     <div className="quantity-controls">
                       <button
                         className="qty-btn"
-                        onClick={() => handleDecrease(item)}
-                        title="Disminuir"
+                        onClick={() => handleDecrement(item)}
                       >
                         −
                       </button>
                       <span className="qty-value">{item.quantity}</span>
                       <button
                         className="qty-btn"
-                        onClick={() => handleIncrease(item)}
-                        title="Aumentar"
+                        onClick={() => handleIncrement(item)}
                       >
                         +
                       </button>
@@ -124,41 +116,39 @@ function CartItem({ navigateTo }) {
                     <button
                       className="remove-btn"
                       onClick={() => handleRemove(item.name)}
-                      title="Eliminar artículo"
                     >
-                      🗑 Eliminar
+                      🗑 Delete
                     </button>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* RESUMEN */}
             <div className="cart-summary">
-              <h2>Resumen del Pedido</h2>
+              <h2>Order Summary</h2>
               <div className="summary-row">
-                <span>Artículos ({totalItems})</span>
-                <span>S/. {totalPrice.toFixed(2)}</span>
+                <span>Total Plants ({totalItems})</span>
+                <span>${totalPrice.toFixed(2)}</span>
               </div>
               <div className="summary-row">
-                <span>Envío</span>
-                <span className="free">Gratis 🎁</span>
+                <span>Shipping</span>
+                <span className="free">Free 🎁</span>
               </div>
               <div className="summary-divider" />
               <div className="summary-total">
-                <span>Total</span>
-                <span>S/. {totalPrice.toFixed(2)}</span>
+                <span>Total Amount</span>
+                <span>${totalPrice.toFixed(2)}</span>
               </div>
 
               <button className="checkout-btn" onClick={handleCheckout}>
-                💳 Pagar — Próximamente
+                💳 Checkout — Coming Soon
               </button>
 
               <button
                 className="continue-shopping-btn"
-                onClick={() => navigateTo('products')}
+                onClick={handleContinueShopping}
               >
-                ← Continuar Comprando
+                ← Continue Shopping
               </button>
             </div>
           </div>

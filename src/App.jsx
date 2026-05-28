@@ -7,30 +7,40 @@ import AboutUs from './components/AboutUs';
 import './App.css';
 
 function AppContent() {
+  const [showProductList, setShowProductList] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
 
-  const navigateTo = (page) => setCurrentPage(page);
+  const navigateTo = (page) => {
+    setCurrentPage(page);
+    if (page === 'products') setShowProductList(true);
+    else setShowProductList(false);
+  };
+
+  const handleGetStarted = () => {
+    setShowProductList(true);
+    setCurrentPage('products');
+  };
 
   return (
     <>
       {currentPage === 'home' && (
         <div className="landing-page">
           <div className="landing-content">
-            <h1>🌿 Paradise Nursery</h1>
-            <p className="subtitle">Tu tienda de plantas de interior favorita</p>
-            <p className="tagline">"Donde cada planta encuentra su hogar"</p>
-            <button className="start-btn" onClick={() => navigateTo('products')}>
-              Comenzar
+            <h1>Welcome to Paradise Nursery</h1>
+            <p className="subtitle">Your favorite indoor plant store</p>
+            <p className="tagline">"Where every plant finds its home"</p>
+            <button className="start-btn" onClick={handleGetStarted}>
+              Get Started
             </button>
             <br />
             <button className="about-link" onClick={() => navigateTo('about')}>
-              Acerca de Nosotros
+              About Us
             </button>
           </div>
         </div>
       )}
 
-      {currentPage === 'products' && (
+      {currentPage === 'products' && showProductList && (
         <ProductList navigateTo={navigateTo} />
       )}
 
